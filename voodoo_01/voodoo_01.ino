@@ -31,6 +31,7 @@ const int sensorPinD = 7
 char* bearLife[]={
   "I would be truly amused if you came closer wo we could talk", 
   "I used to have a nice life, until I was left here, on my own", 
+  "want to be my friend? come play with me"
   "More phrases about my personal bear life",
   "More phrases about my personal bear life",
   "More phrases about my personal bear life",
@@ -44,6 +45,8 @@ char* bearLife[]={
 char* gossipVoice[]={
   "said you wouldn't hurt me. Don't do it!", 
   "doesn't know how to hug a bear. Will you show him how it's done?", 
+  "Why did you hit me? I didn't do anything wrong.""
+  "You're just like Suzy, she loves to beat up innocent bears"
   "more phrases by other users",
   "more phrases by other users",
   "more phrases by other users"
@@ -52,6 +55,7 @@ char* gossipVoice[]={
 // Once the interaction begins, the Bear will talk to the user
 char* elicitingPhrases[]={
   "Wow, that's a really ugly scarf",
+  "you look like a movie star. thanks for being here with me."
   "It smells like a bear died in here; and it's no me",
   "Nice",
   "",
