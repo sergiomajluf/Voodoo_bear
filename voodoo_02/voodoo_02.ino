@@ -53,12 +53,13 @@ void loop(){
 
 
 void isNegative() {
-  if (analogRead(flexBodyFront) > sensorLow || analogRead(flexBodyFront) < sensorHigh){
+  if (isRunning == false && (analogRead(flexBodyFront) > sensorLow || analogRead(flexBodyFront) < sensorHig)h){
     // do negative feedback
   } 
 
 
 }
+
 
 
 
