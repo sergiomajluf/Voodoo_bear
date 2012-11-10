@@ -26,14 +26,15 @@ int tempIndex = 0;
 
 // Arrays
 
-
 char* myStrings[]={
   "This is GREEN string 0", "This is GREEN string 1", "This is GREEN string 2",
-  "This is GREEN string 4", "This is GREEN string 5","This is GREEN string 6"};
+  "This is GREEN string 4", "This is GREEN string 5","This is GREEN string 6",
+  "This is GREEN string 7", "This is GREEN string 8", "This is GREEN string 9",
+  "This is GREEN string 10", "This is GREEN string 11","This is GREEN string 12"};
 
 char* notMyStrings[]={
   "This is NOT RED string 0", "This is NOT RED string 1", "This is NOT RED string 2",
-  "This is NOT RED string 4", "This is NOT RED string 5","This is NOT RED string 6"};
+  "This is NOT RED string 4", "This is NOT RED string 5", "This is NOT RED string 6"};
 
 
 // set up a new serial port
@@ -61,6 +62,7 @@ void setup(){
 
   // set the data rate for the SoftwareSerial port
   emicSerial.begin(9600);
+  Serial.begin(9600);
 
   /*
     When the Emic 2 powers on, it takes about 3 seconds for it to successfully
@@ -90,25 +92,13 @@ void loop(){
   if (digitalRead (rightHand) == HIGH) {         
 
     digitalWrite(ledPinRed, HIGH);
-    /*
-    emicSerial.print('S');
-     emicSerial.print(myStrings[1]);
-     emicSerial.print('\n');
-     while (emicSerial.read() != ':');   // Wait here until the Emic 2 responds with a ":" indicating it's ready to accept the next command
-     */
-    speak(notMyStrings);
+    speak(notMyStrings, 7);
   } 
 
   else if (digitalRead (leftHand) == HIGH) {         
 
     digitalWrite(ledPinGreen, HIGH);
-    /*
-    emicSerial.print('S');
-     emicSerial.print(myStrings[2]);
-     emicSerial.print('\n');
-     while (emicSerial.read() != ':');   // Wait here until the Emic 2 responds with a ":" indicating it's ready to accept the next command
-     */
-    speak(myStrings);
+    speak(myStrings, 13);
   }
 
   else {
@@ -123,14 +113,24 @@ void loop(){
 }
 
 
-void speak(char** nameOfTheArray ) {
-  int randnumber = random(7);
+void speak(char** nameOfTheArray, int lengthOfTheArray ) {
+
+  int randnumber = random(lengthOfTheArray);
+
+  Serial.print("arrayLength is: ");
+  Serial.print(lengthOfTheArray);
+  Serial.print("\t");
+  Serial.print("random is: \t");
+  Serial.println(randnumber);
   emicSerial.print('S');
   emicSerial.print(nameOfTheArray[randnumber]);
   emicSerial.print('\n');
   while (emicSerial.read() != ':');   // Wait here until the Emic 2 responds with a ":" indicating it's ready to accept the next command
 
 }
+
+
+
 
 
 
