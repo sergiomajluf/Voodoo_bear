@@ -1,3 +1,4 @@
+
 // include the SoftwareSerial library so we can use it to talk to the Emic 2 module
 #include <SoftwareSerial.h>
 
@@ -29,132 +30,134 @@ boolean positiveFeedback = false;
 //boolean isRunning = false;
 
 char* myStrings[]={
- "This is GREEN string 0", "This is GREEN string 1", "This is GREEN string 2",
- "This is GREEN string 4", "This is GREEN string 5","This is GREEN string 6",
- "This is GREEN string 7", "This is GREEN string 8", "This is GREEN string 9",
- "This is GREEN string 10", "This is GREEN string 11","This is GREEN string 12"};
+  "This is GREEN string 0", "This is GREEN string 1", "This is GREEN string 2",
+  "This is GREEN string 4", "This is GREEN string 5","This is GREEN string 6",
+  "This is GREEN string 7", "This is GREEN string 8", "This is GREEN string 9",
+  "This is GREEN string 10", "This is GREEN string 11","This is GREEN string 12"};
 
 char* notMyStrings[]={
- "This is NOT RED string 0", "This is NOT RED string 1", "This is NOT RED string 2",
- "This is NOT RED string 4", "This is NOT RED string 5", "This is NOT RED string 6"};
-
+  "This is NOT RED string 0", "This is NOT RED string 1", "This is NOT RED string 2",
+  "This is NOT RED string 4", "This is NOT RED string 5", "This is NOT RED string 6"};
+  
 char* brushingPhrases[]={
- "This is a brushing phrase 0", "This is a brushing phrase 1", "This is a brushing phrase 2",
- "This is a brushing phrase 3", "This is a brushing phrase 4"};
+  "This is a brushing phrase 0", "This is a brushing phrase 1", "This is a brushing phrase 2",
+  "This is a brushing phrase 3", "This is a brushing phrase 4"};
 
 void setup(){
- //Hall sensors
- pinMode (hallSensor, INPUT);
+  
+  pinMode(rxPin, INPUT);
+  pinMode(txPin, OUTPUT);
+  //Hall sensors
+  pinMode (hallSensor, INPUT);
+  
+  pinMode (rightHand, INPUT);
+  pinMode (leftHand, INPUT);
+  digitalWrite(rightHand, LOW);
+  digitalWrite (leftHand, LOW);
+  
+  // initialize the digital pin as an output.
+  pinMode(ledPinRed, OUTPUT);     
+  pinMode(ledPinGreen, OUTPUT);     
 
- pinMode (rightHand, INPUT);
- pinMode (leftHand, INPUT);
- digitalWrite(rightHand, LOW);
- digitalWrite (leftHand, LOW);
+  //Here is the speech to text section of setup
+  // define pin modes
 
- // initialize the digital pin as an output.
- pinMode(ledPinRed, OUTPUT);     
- pinMode(ledPinGreen, OUTPUT);     
+  
+  // set the data rate for the SoftwareSerial port
+  emicSerial.begin(9600);
+  Serial.begin(9600);
 
- //Here is the speech to text section of setup
- // define pin modes
- pinMode(rxPin, INPUT);
- pinMode(txPin, OUTPUT);
-
- // set the data rate for the SoftwareSerial port
- emicSerial.begin(9600);
- Serial.begin(9600);
-
- digitalWrite(ledPinRed, LOW);  // turn LED off
- digitalWrite(ledPinGreen, LOW); 
-
- /*
-   When the Emic 2 powers on, it takes about 3 seconds for it to successfully
-   intialize. It then sends a ":" character to indicate it's ready to accept
-   commands. If the Emic 2 is already initialized, a CR will also cause it
-   to send a ":"
- */
- emicSerial.print('\n');             // Send a CR in case the system is already up
- while (emicSerial.read() != ':');   // When the Emic 2 has initialized and is ready, it will send a single ':' character, so wait here until we receive it
- delay(10);                          // Short delay
- emicSerial.flush();                 // Flush the receive buffer
+  digitalWrite(ledPinRed, LOW);  // turn LED off
+  digitalWrite(ledPinGreen, LOW); 
+  
+  /*
+    When the Emic 2 powers on, it takes about 3 seconds for it to successfully
+    intialize. It then sends a ":" character to indicate it's ready to accept
+    commands. If the Emic 2 is already initialized, a CR will also cause it
+    to send a ":"
+  */
+  emicSerial.print('\n');             // Send a CR in case the system is already up
+  while (emicSerial.read() != ':');   // When the Emic 2 has initialized and is ready, it will send a single ':' character, so wait here until we receive it
+  delay(10);                          // Short delay
+  emicSerial.flush();                 // Flush the receive buffer
 }
 
 void loop(){
+  
+   if (digitalRead (rightHand) == HIGH) {         
 
-  if (digitalRead (rightHand) == HIGH) {         
+    digitalWrite(ledPinRed, HIGH);
+    speak(notMyStrings, 7, 2);
+  } 
 
-   digitalWrite(ledPinRed, HIGH);
-   speak(notMyStrings, 7, 2);
- } 
+  else if (digitalRead (leftHand) == HIGH) {         
 
- else if (digitalRead (leftHand) == HIGH) {         
-
-   digitalWrite(ledPinGreen, HIGH);
-   speak(myStrings, 13, 2);
- }
-
-   else {
-   digitalWrite(ledPinRed, LOW);
-   digitalWrite(ledPinGreen, LOW);
-   }
-
-   if (analogRead(flexBodyFront) > sensorLow && analogRead(flexBodyFront) < sensorHigh){
-     speak(myStrings, 13, 1);
-   //negativeFeedback = true; 
-   }
-
-     if ((analogRead(flexBodyFront) > sensorLow && analogRead(flexBodyFront) < sensorHigh) && (analogRead(flexBodyBack) > sensorLow && analogRead(flexBodyBack) < sensorHigh)){
-      speak(notMyStrings, 7, 1);
-     }
-     //positiveFeedback = true;
+    digitalWrite(ledPinGreen, HIGH);
+    speak(myStrings, 13, 2);
+  }
+  
+    else {
+    digitalWrite(ledPinRed, LOW);
+    digitalWrite(ledPinGreen, LOW);
+    }
+  
+    if (analogRead(flexBodyFront) > sensorLow && analogRead(flexBodyFront) < sensorHigh){
+      speak(myStrings, 13, 1);
+    //negativeFeedback = true; 
+    }
+    
+      if ((analogRead(flexBodyFront) > sensorLow && analogRead(flexBodyFront) < sensorHigh) && (analogRead(flexBodyBack) > sensorLow && analogRead(flexBodyBack) < sensorHigh)){
+       speak(notMyStrings, 7, 1);
+      }
+      //positiveFeedback = true;
 
 
-   emicSerial.print('X');
- }
 
- void speak(char** nameOfTheArray, int lengthOfTheArray, int statusCheck) {
+  }
+  
+  void speak(char** nameOfTheArray, int lengthOfTheArray, int statusCheck) {
 
- int randnumber = random(lengthOfTheArray);
+  int randnumber = random(lengthOfTheArray);
 
- Serial.print("arrayLength is: ");
- Serial.print(lengthOfTheArray);
- Serial.print("\t");
- Serial.print("random is: \t");
- Serial.println(randnumber);
- emicSerial.print('S');
- emicSerial.print(nameOfTheArray[randnumber]);
- emicSerial.print('\n');
- while (emicSerial.read() != ':');   // Wait here until the Emic 2 responds with a ":" indicating it's ready to accept the next command
- if(statusCheck==1){
- }
- else if(statusCheck==2){
- }
- else if(statusCheck==3){
-   brushing=false;
- }
+  Serial.print("arrayLength is: ");
+  Serial.print(lengthOfTheArray);
+  Serial.print("\t");
+  Serial.print("random is: \t");
+  Serial.println(randnumber);
+  emicSerial.print('S');
+  emicSerial.print(nameOfTheArray[randnumber]);
+  emicSerial.print('\n');
+  while (emicSerial.read() != ':');   // Wait here until the Emic 2 responds with a ":" indicating it's ready to accept the next command
+  if(statusCheck==1){
+  }
+  else if(statusCheck==2){
+  }
+  else if(statusCheck==3){
+    brushing=false;
+  }
 }
- void brushResponse(){
-   brushing=true;
-   delay(1000);
-   speak(brushingPhrases, 5, 3);
+  void brushResponse(){
+    brushing=true;
+    delay(1000);
+    speak(brushingPhrases, 5, 3);
+    
+  } 
 
- } 
-
- void sensorCheck(){
- if(digitalRead (hallSensor)==HIGH && brushing==false) {  
-     brushResponse();
- }
-
- else if(digitalRead (hallSensor)==HIGH && brushing==true) {
-
- }
-
- else if(digitalRead (hallSensor)==LOW && brushing==false) {  
-
- }
-
- }
-
+  void sensorCheck(){
+  if(digitalRead (hallSensor)==HIGH && brushing==false) {  
+      brushResponse();
+  }
+  
+  else if(digitalRead (hallSensor)==HIGH && brushing==true) {
+    
+  }
+    
+  else if(digitalRead (hallSensor)==LOW && brushing==false) {  
+      
+  }
+  
+  }
+  
 
 
 //  if (digitalRead (rightHand) == HIGH || digitalRead (leftHand) == HIGH) {
@@ -170,11 +173,11 @@ void loop(){
 //    
 
 //    
-
-
-
-
-
+    
+    
+   
+   
+  
 //  //Blinking eyes action
 //  digitalWrite(ledPin, HIGH);   // turn the LED on (HIGH is the voltage level)
 //  digitalWrite(led2, HIGH);   // turn the LED on (HIGH is the voltage level)
@@ -194,17 +197,17 @@ void loop(){
 //  digitalWrite(ledPin, LOW);
 //    
 //  delay(500);    // 1/2 second delay
-
- // Sing a song
+    
+  // Sing a song
 //  emicSerial.print("D1\n");
 //  digitalWrite(ledPin, HIGH);         // Turn on LED while Emic is outputting audio
 //  while (emicSerial.read() != ':');   // Wait here until the Emic 2 responds with a ":" indicating it's ready to accept the next command
 //  digitalWrite(ledPin, LOW);
 //
 //  while(1)      // Demonstration complete!
+  
 
-
-
+  
 
 
 
